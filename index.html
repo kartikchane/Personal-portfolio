@@ -60,7 +60,7 @@ ul,ol{margin:0;padding:0;list-style:none}
 
 /* ---------- header ---------- */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink-glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--rule)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;height:62px}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:14px;font-weight:500}
 .mark{display:grid;place-items:center;width:34px;height:34px;border:1.5px solid var(--orange);border-radius:9px;font-family:var(--display);font-stretch:125%;font-weight:800;font-size:13px;color:var(--orange);transition:background .2s,color .2s,transform .3s var(--ease)}
 .brand:hover .mark{background:var(--orange);color:var(--orange-ink);transform:rotate(-8deg)}
@@ -71,16 +71,32 @@ ul,ol{margin:0;padding:0;list-style:none}
 .nav a:hover::after,.nav a.on::after{transform:scaleX(1)}
 .nav a.cta{margin-left:8px;color:var(--orange-ink);background:var(--orange);font-weight:600;transition:transform .2s var(--ease),box-shadow .2s}
 .nav a.cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px -8px var(--orange)}
-.menu-btn{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--rule);background:var(--panel);cursor:pointer;place-items:center}
+.menu-btn{display:none;margin-left:8px;width:40px;height:40px;border-radius:10px;border:1px solid var(--rule);background:var(--panel);cursor:pointer;place-items:center}
 .menu-btn span{display:block;width:16px;height:2px;background:var(--text);border-radius:2px;position:relative;transition:transform .25s var(--ease),background .2s}
 .menu-btn span::before,.menu-btn span::after{content:"";position:absolute;left:0;width:16px;height:2px;background:var(--text);border-radius:2px;transition:transform .25s var(--ease)}
 .menu-btn span::before{top:-5px}.menu-btn span::after{top:5px}
 .menu-btn[aria-expanded="true"] span{background:transparent}
 .menu-btn[aria-expanded="true"] span::before{transform:translateY(5px) rotate(45deg)}
 .menu-btn[aria-expanded="true"] span::after{transform:translateY(-5px) rotate(-45deg)}
-.mobile-menu{border-top:1px solid var(--rule);padding-block:8px 16px}
-.mobile-menu a{display:flex;justify-content:space-between;padding:12px 4px;border-bottom:1px solid var(--rule);font-size:16px}
-.mobile-menu a span{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.mobile-menu{border-top:1px solid var(--rule);background:var(--ink);max-height:calc(100vh - 62px);overflow-y:auto;box-shadow:0 30px 60px -20px rgba(0,0,0,.8);animation:mmDrop .35s var(--ease)}
+@keyframes mmDrop{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.mm-inner{display:flex;flex-direction:column;gap:20px;padding-block:10px 22px}
+.mm-list{display:flex;flex-direction:column}
+.mm-link{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:14px;padding:15px 6px;border-bottom:1px solid var(--rule);animation:mmIn .45s var(--ease) backwards;animation-delay:calc(var(--k,0) * 45ms + 60ms);transition:color .2s,padding .25s var(--ease),background .2s}
+.mm-link:first-child{border-top:0}
+.mm-link span{font-family:var(--display);font-stretch:112%;font-weight:700;font-size:1.3rem;line-height:1.2}
+.mm-link small{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.mm-link .ico{color:var(--dim);transition:transform .25s var(--ease),color .2s}
+.mm-link:hover,.mm-link:focus-visible{padding-left:14px;color:var(--orange);background:var(--panel)}
+.mm-link:hover .ico,.mm-link:focus-visible .ico{transform:translateX(4px);color:var(--orange)}
+.mm-link.on span{color:var(--orange)}
+.mm-link.on small{color:var(--orange)}
+@keyframes mmIn{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+.mm-foot{display:flex;flex-direction:column;gap:14px;padding:16px;border:1px solid var(--rule);border-radius:var(--r);background:var(--panel);animation:mmIn .45s var(--ease) .35s backwards}
+.mm-foot .row{display:flex;flex-wrap:wrap;gap:10px}
+.mm-foot .status{align-self:flex-start}
+.mm-foot .btn{flex:1 1 140px}
+@media (min-width:821px){.mobile-menu{display:none!important}}
 @media (max-width:820px){.nav a:not(.cta){display:none}.menu-btn{display:grid}}
 
 /* ---------- buttons, chips ---------- */
@@ -463,7 +479,7 @@ html.anim .rv.in{opacity:1;transform:none}
 
 
 <header class="top">
-  <div class="wrap">
+  <div class="wrap top-bar">
     <a class="brand" href="#top" aria-label="Kartik Chanekar, back to top"><span class="mark">KC</span>kartik chanekar</a>
     <nav class="nav" aria-label="Sections">
       <a href="#experience">Experience</a>
@@ -476,12 +492,24 @@ html.anim .rv.in{opacity:1;transform:none}
     </nav>
   </div>
   <div class="progress" id="progress" aria-hidden="true"></div>
-  <div class="wrap mobile-menu" id="mobile-menu" hidden>
-    <a href="#experience">Experience <span>~/experience</span></a>
-    <a href="#projects">Projects <span>~/projects</span></a>
-    <a href="#stack">Tech stack <span>~/stack</span></a>
-    <a href="#github">GitHub <span>~/github</span></a>
-    <a href="#activities">Activities <span>~/activities</span></a>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <div class="wrap mm-inner">
+      <nav class="mm-list" aria-label="Sections">
+        <a class="mm-link" href="#experience" style="--k:0"><span>Experience</span><small>~/experience</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="mm-link" href="#projects" style="--k:1"><span>Projects</span><small>~/projects</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="mm-link" href="#stack" style="--k:2"><span>Tech stack</span><small>~/stack</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="mm-link" href="#github" style="--k:3"><span>GitHub</span><small>~/github</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="mm-link" href="#activities" style="--k:4"><span>Activities</span><small>~/activities</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="mm-link" href="#contact" style="--k:5"><span>Contact</span><small>~/contact</small><svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h9.5M8.5 4 12.5 8 8.5 12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </nav>
+      <div class="mm-foot">
+        <p class="status"><span class="dot" aria-hidden="true"></span>Available for SDE &amp; software roles</p>
+        <div class="row">
+          <a class="btn primary" href="#contact">Get in touch</a>
+          <a class="btn" href="https://github.com/kartikchane" target="_blank" rel="noopener">GitHub <svg class="ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 11 11 5M6 5h5v5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -1049,12 +1077,15 @@ html.anim .rv.in{opacity:1;transform:none}
   function setMenu(open){mb.setAttribute("aria-expanded",open?"true":"false");mb.setAttribute("aria-label",open?"Close menu":"Open menu");mm.hidden=!open;}
   mb.addEventListener("click",function(){setMenu(mm.hidden);});
   $$("a",mm).forEach(function(a){a.addEventListener("click",function(){setMenu(false);});});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!mm.hidden){setMenu(false);mb.focus();}});
+  document.addEventListener("click",function(e){if(!mm.hidden&&!e.target.closest(".top"))setMenu(false);});
+  window.addEventListener("resize",function(){if(!mm.hidden&&window.innerWidth>820)setMenu(false);});
 
   /* ---------------- nav highlight ---------------- */
-  var links=$$(".nav a:not(.cta)");
+  var links=$$(".nav a:not(.cta), .mm-link");
   if("IntersectionObserver" in window){
-    var map={};links.forEach(function(a){map[a.getAttribute("href").slice(1)]=a;});
-    var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting&&map[x.target.id]){links.forEach(function(a){a.classList.remove("on");});map[x.target.id].classList.add("on");}});},{rootMargin:"-45% 0px -50% 0px"});
+    var map={};links.forEach(function(a){var id=a.getAttribute("href").slice(1);(map[id]=map[id]||[]).push(a);});
+    var io=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting&&map[x.target.id]){links.forEach(function(a){a.classList.remove("on");});map[x.target.id].forEach(function(a){a.classList.add("on");});}});},{rootMargin:"-45% 0px -50% 0px"});
     Object.keys(map).forEach(function(id){var el=document.getElementById(id);if(el)io.observe(el);});
   }
 
